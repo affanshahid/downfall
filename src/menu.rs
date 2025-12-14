@@ -1,5 +1,6 @@
 use bevy::{
     input_focus::InputDispatchPlugin,
+    picking::hover::Hovered,
     prelude::*,
     ui_widgets::{Activate, Button, UiWidgetsPlugins, observe},
 };
@@ -12,6 +13,7 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((UiWidgetsPlugins, InputDispatchPlugin))
             .add_systems(OnEnter(GameState::Menu), setup_menu)
+            .add_systems(Update, button_hovered.run_if(in_state(GameState::Menu)))
             .add_systems(OnExit(GameState::Menu), teardown_menu);
     }
 }
@@ -50,6 +52,8 @@ fn setup_menu(mut commands: Commands) {
                     align_items: AlignItems::Center,
                     ..default()
                 },
+                Hovered::default(),
+                BackgroundColor(Color::srgba(0., 0., 0., 0.)),
                 BorderColor::all(Color::WHITE),
                 BorderRadius::all(px(12)),
                 Button,
@@ -67,6 +71,8 @@ fn setup_menu(mut commands: Commands) {
                     align_items: AlignItems::Center,
                     ..default()
                 },
+                Hovered::default(),
+                BackgroundColor(Color::srgba(0., 0., 0., 0.)),
                 BorderColor::all(Color::WHITE),
                 BorderRadius::all(px(12)),
                 Button,
@@ -85,8 +91,18 @@ fn exit(_: On<Activate>, mut commands: Commands) {
     commands.write_message(AppExit::Success);
 }
 
-fn teardown_menu(mut commands: Commands, menu: Query<(&MenuRoot, Entity)>) {
-    let Ok((_, menu)) = menu.single() else {
+fn button_hovered(mut buttons: Query<(&mut BackgroundColor, &Hovered), With<Button>>) {
+    for (mut bg, hovered) in buttons.iter_mut() {
+        if hovered.get() {
+            bg.0 = Color::WHITE.with_alpha(0.3);
+        } else {
+            bg.0 = Color::srgba(0., 0., 0., 0.);
+        }
+    }
+}
+
+fn teardown_menu(mut commands: Commands, menu: Query<Entity, With<MenuRoot>>) {
+    let Ok(menu) = menu.single() else {
         return;
     };
 

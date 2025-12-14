@@ -1,13 +1,24 @@
-use crate::menu::MenuPlugin;
-use bevy::prelude::*;
+use crate::{level::LevelPlugin, menu::MenuPlugin};
+use bevy::{prelude::*, window::WindowResolution};
 
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((DefaultPlugins, MenuPlugin))
-            .init_state::<GameState>()
-            .add_systems(Startup, setup_camera);
+        app.add_plugins((
+            DefaultPlugins.set(WindowPlugin {
+                primary_window: Some(Window {
+                    resolution: WindowResolution::new(1280, 720).with_scale_factor_override(1.0),
+                    resizable: false,
+                    ..default()
+                }),
+                ..default()
+            }),
+            MenuPlugin,
+            LevelPlugin,
+        ))
+        .init_state::<GameState>()
+        .add_systems(Startup, setup_camera);
     }
 }
 

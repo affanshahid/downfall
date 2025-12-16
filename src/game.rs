@@ -8,7 +8,7 @@ impl Plugin for GamePlugin {
         app.add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
-                    resolution: WindowResolution::new(1280, 720).with_scale_factor_override(1.0),
+                    resolution: WindowResolution::new(1280, 720),
                     resizable: false,
                     ..default()
                 }),

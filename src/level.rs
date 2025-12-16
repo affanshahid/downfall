@@ -13,7 +13,7 @@ impl Plugin for LevelPlugin {
 }
 
 #[derive(Component)]
-pub(crate) struct BackgroundImage;
+pub(crate) struct LevelEntity;
 
 fn setup_level(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
@@ -23,7 +23,7 @@ fn setup_level(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..default()
         },
         ImageNode::new(asset_server.load("background.png")),
-        BackgroundImage,
+        LevelEntity,
     ));
 }
 
@@ -35,7 +35,7 @@ fn handle_escape(keys: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextSta
     next_state.set(GameState::Menu);
 }
 
-fn teardown_level(mut commands: Commands, background: Query<Entity, With<BackgroundImage>>) {
+fn teardown_level(mut commands: Commands, background: Query<Entity, With<LevelEntity>>) {
     let Ok(backgroud) = background.single() else {
         return;
     };

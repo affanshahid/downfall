@@ -35,10 +35,8 @@ fn handle_escape(keys: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextSta
     next_state.set(GameState::Menu);
 }
 
-fn teardown_level(mut commands: Commands, background: Query<Entity, With<LevelEntity>>) {
-    let Ok(backgroud) = background.single() else {
-        return;
-    };
-
-    commands.entity(backgroud).despawn();
+fn teardown_level(mut commands: Commands, entities: Query<Entity, With<LevelEntity>>) {
+    for entity in entities.iter() {
+        commands.entity(entity).despawn();
+    }
 }

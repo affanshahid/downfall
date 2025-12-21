@@ -1,0 +1,149 @@
+{
+  "imagePath": "character_spritesheet.png",
+  "SubTexture": [
+    {
+      "frameWidth": 340,
+      "y": 661,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 658,
+      "name": "idle_0",
+      "frameY": 0,
+      "x": 1
+    },
+    {
+      "frameWidth": 340,
+      "y": 1,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 657,
+      "name": "idle_1",
+      "frameY": -2,
+      "x": 342
+    },
+    {
+      "frameWidth": 340,
+      "y": 660,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 655,
+      "name": "idle_2",
+      "frameY": -3,
+      "x": 342
+    },
+    {
+      "frameWidth": 340,
+      "y": 657,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 654,
+      "name": "idle_3",
+      "frameY": -5,
+      "x": 683
+    },
+    {
+      "frameWidth": 340,
+      "y": 1,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 652,
+      "name": "idle_4",
+      "frameY": -7,
+      "x": 1024
+    },
+    {
+      "frameWidth": 340,
+      "y": 1,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 651,
+      "name": "idle_5",
+      "frameY": -8,
+      "x": 1706
+    },
+    {
+      "frameWidth": 340,
+      "y": 654,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 647,
+      "name": "idle_6",
+      "frameY": -10,
+      "x": 1365
+    },
+    {
+      "frameWidth": 340,
+      "y": 1,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 651,
+      "name": "idle_7",
+      "frameY": -8,
+      "x": 1365
+    },
+    {
+      "frameWidth": 340,
+      "y": 1313,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 652,
+      "name": "idle_8",
+      "frameY": -7,
+      "x": 683
+    },
+    {
+      "frameWidth": 340,
+      "y": 1,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 654,
+      "name": "idle_9",
+      "frameY": -5,
+      "x": 683
+    },
+    {
+      "frameWidth": 340,
+      "y": 1317,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 655,
+      "name": "idle_10",
+      "frameY": -3,
+      "x": 342
+    },
+    {
+      "frameWidth": 340,
+      "y": 1321,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 657,
+      "name": "idle_11",
+      "frameY": -2,
+      "x": 1
+    },
+    {
+      "frameWidth": 340,
+      "y": 1,
+      "frameHeight": 660,
+      "width": 339,
+      "frameX": 0,
+      "height": 658,
+      "name": "idle_12",
+      "frameY": 0,
+      "x": 1
+    }
+  ],
+  "name": "character_spritesheet"
+}

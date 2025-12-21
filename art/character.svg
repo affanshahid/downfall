@@ -24,9 +24,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="8"
-     inkscape:cx="288.1875"
-     inkscape:cy="154.9375"
+     inkscape:zoom="1"
+     inkscape:cx="-8.5"
+     inkscape:cy="230.5"
      inkscape:window-width="1718"
      inkscape:window-height="1401"
      inkscape:window-x="-7"
@@ -376,7 +376,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="helmet"
-     style="display:none">
+     style="display:inline">
     <path
        id="path37"
        style="fill:#ffd42a;fill-opacity:1;stroke:#000000;stroke-width:2.11667;stroke-dasharray:none"

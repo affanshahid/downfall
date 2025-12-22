@@ -1,9 +1,6 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::{
-    animation::{AnimatedSprite, AnimationTextureAtlasLayout},
-    game::GameState,
-};
+use crate::{animation::AnimationTextureAtlasLayout, game::GameState, player::Player};
 
 pub(crate) struct LevelPlugin;
 
@@ -31,23 +28,8 @@ fn setup_level(
 
     commands.spawn((bg, LevelEntity));
 
-    let animation_layout = AnimationTextureAtlasLayout::from_json(
-        include_str!("../assets/character_spritesheet.json"),
-        &mut layouts,
-    )
-    .expect("expected to load spritesheet layout");
-
-    let animation_layout_handle = animation_layouts.add(animation_layout.clone());
-
     commands.spawn((
-        AnimatedSprite::new(
-            asset_server.load("character_spritesheet.png"),
-            animation_layout_handle,
-            &animation_layout,
-            "idle",
-            24,
-        ),
-        Transform::from_translation(Vec3::new(0., -250., 10.)).with_scale(Vec3::splat(0.25)),
+        Player::new(asset_server, &mut layouts, &mut animation_layouts),
         LevelEntity,
     ));
 }

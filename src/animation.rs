@@ -33,7 +33,7 @@ impl AnimatedSprite {
         layout: &AnimationTextureAtlasLayout,
         animation: &str,
         fps: u8,
-    ) -> impl Bundle {
+    ) -> impl Bundle + use<> {
         (
             Sprite::from_atlas_image(
                 image,

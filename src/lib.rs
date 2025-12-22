@@ -5,5 +5,6 @@ mod animation;
 mod game;
 mod level;
 mod menu;
+mod player;
 
 pub use game::GamePlugin;

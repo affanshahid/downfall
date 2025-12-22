@@ -90,7 +90,7 @@ pub(crate) struct AnimationTextureAtlasLayout {
 impl AnimationTextureAtlasLayout {
     pub(crate) fn from_json(
         json: &str,
-        assets: &mut ResMut<Assets<TextureAtlasLayout>>,
+        assets: &mut Assets<TextureAtlasLayout>,
     ) -> Result<Self, BevyError> {
         let mut raw = TextureAtlasLayout::new_empty(UVec2::ZERO);
         let spritesheet_data: SpritesheetData = serde_json::from_str(json)?;

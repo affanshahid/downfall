@@ -1,0 +1,19 @@
+{
+  "definitions": [
+    {
+      "name": "wrench",
+      "sprite_path": "wrench.png",
+      "scale": 0.25
+    },
+    {
+      "name": "cone",
+      "sprite_path": "cone.png",
+      "scale": 0.25
+    },
+    {
+      "name": "wrench",
+      "sprite_path": "toolbox.png",
+      "scale": 0.25
+    }
+  ]
+}

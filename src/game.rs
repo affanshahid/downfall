@@ -1,5 +1,6 @@
 use crate::{
-    animation::AnimationPlugin, level::LevelPlugin, menu::MenuPlugin, player::PlayerPlugin,
+    animation::AnimationPlugin, debris::DebrisPlugin, level::LevelPlugin, menu::MenuPlugin,
+    player::PlayerPlugin,
 };
 use bevy::{prelude::*, window::WindowResolution};
 
@@ -25,6 +26,7 @@ impl Plugin for GamePlugin {
             LevelPlugin,
             AnimationPlugin,
             PlayerPlugin,
+            DebrisPlugin,
         ))
         .init_state::<GameState>()
         .add_systems(Startup, setup_camera);

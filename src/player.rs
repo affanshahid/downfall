@@ -35,9 +35,9 @@ pub(crate) struct Player {
 
 impl Player {
     pub(crate) fn new(
-        asset_server: Res<AssetServer>,
-        layouts: &mut ResMut<Assets<TextureAtlasLayout>>,
-        animation_layouts: &mut ResMut<Assets<AnimationTextureAtlasLayout>>,
+        asset_server: &AssetServer,
+        layouts: &mut Assets<TextureAtlasLayout>,
+        animation_layouts: &mut Assets<AnimationTextureAtlasLayout>,
     ) -> impl Bundle {
         let animation_layout = AnimationTextureAtlasLayout::from_json(
             include_str!("../assets/character_spritesheet.json"),

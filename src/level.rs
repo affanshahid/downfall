@@ -1,6 +1,11 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::{animation::AnimationTextureAtlasLayout, game::GameState, player::Player};
+use crate::{
+    animation::AnimationTextureAtlasLayout,
+    debris::{Debris, DebrisData},
+    game::GameState,
+    player::Player,
+};
 
 pub(crate) struct LevelPlugin;
 
@@ -21,6 +26,7 @@ fn setup_level(
     mut layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut animation_layouts: ResMut<Assets<AnimationTextureAtlasLayout>>,
     window: Query<&Window, With<PrimaryWindow>>,
+    debris_data: Res<DebrisData>,
 ) {
     let Ok(window) = window.single() else { return };
     let mut bg = Sprite::from_image(asset_server.load("background.png"));
@@ -29,9 +35,11 @@ fn setup_level(
     commands.spawn((bg, LevelEntity));
 
     commands.spawn((
-        Player::new(asset_server, &mut layouts, &mut animation_layouts),
+        Player::new(&asset_server, &mut layouts, &mut animation_layouts),
         LevelEntity,
     ));
+
+    commands.spawn(Debris::new_random(&debris_data, &asset_server));
 }
 
 fn handle_escape(keys: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {

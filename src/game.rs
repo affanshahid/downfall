@@ -1,4 +1,4 @@
-use crate::{level::LevelPlugin, menu::MenuPlugin};
+use crate::{animation::AnimationPlugin, level::LevelPlugin, menu::MenuPlugin};
 use bevy::{prelude::*, window::WindowResolution};
 
 pub struct GamePlugin;
@@ -16,6 +16,7 @@ impl Plugin for GamePlugin {
             }),
             MenuPlugin,
             LevelPlugin,
+            AnimationPlugin,
         ))
         .init_state::<GameState>()
         .add_systems(Startup, setup_camera);

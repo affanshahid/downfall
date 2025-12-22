@@ -21,8 +21,8 @@ impl Plugin for AnimationPlugin {
 #[derive(Component)]
 #[require(Sprite)]
 pub(crate) struct AnimatedSprite {
+    pub(crate) animation_name: String,
     layout: Handle<AnimationTextureAtlasLayout>,
-    animation_name: String,
     timer: Timer,
 }
 

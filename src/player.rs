@@ -5,7 +5,7 @@ use crate::{
     game::{GameState, MAX_X, MIN_X},
 };
 
-const VELOCITY_X: f32 = 200.0;
+const VELOCITY_X: f32 = 300.0;
 const SCALE: f32 = 0.25;
 
 pub(crate) struct PlayerPlugin;
@@ -82,8 +82,11 @@ fn handle_input(keys: Res<ButtonInput<KeyCode>>, mut player: Query<&mut Player>)
     player.velocity = velocity.clamp(-VELOCITY_X, VELOCITY_X);
 }
 
-fn movement(time: ResMut<Time>, mut query: Query<(&mut Transform, &mut Player)>) {
-    let Ok((mut transform, mut player)) = query.single_mut() else {
+fn movement(
+    time: ResMut<Time>,
+    mut query: Query<(&mut Transform, &mut Player, &mut AnimatedSprite)>,
+) {
+    let Ok((mut transform, mut player, mut animation)) = query.single_mut() else {
         return;
     };
 
@@ -94,6 +97,12 @@ fn movement(time: ResMut<Time>, mut query: Query<(&mut Transform, &mut Player)>)
         player.direction = Direction::Left;
     } else if translation_x > 0.0 {
         player.direction = Direction::Right;
+    }
+
+    if translation_x == 0.0 {
+        animation.animation_name = "idle".to_string();
+    } else {
+        animation.animation_name = "walk".to_string();
     }
 }
 

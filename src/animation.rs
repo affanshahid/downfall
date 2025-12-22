@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use thiserror::Error;
 
+use crate::game::GameState;
+
 #[derive(Error, Debug)]
 #[error("{0}")]
 pub(crate) struct SpritesheetParsingError(String);
@@ -10,15 +12,82 @@ pub(crate) struct SpritesheetParsingError(String);
 pub(crate) struct AnimationPlugin;
 
 impl Plugin for AnimationPlugin {
-    fn build(&self, _app: &mut App) {}
+    fn build(&self, app: &mut App) {
+        app.init_asset::<AnimationTextureAtlasLayout>()
+            .add_systems(Update, animate.run_if(in_state(GameState::InGame)));
+    }
 }
 
-pub(crate) struct NamedTextureAtlasLayout {
-    pub(crate) layout: Handle<TextureAtlasLayout>,
+#[derive(Component)]
+#[require(Sprite)]
+pub(crate) struct AnimatedSprite {
+    layout: Handle<AnimationTextureAtlasLayout>,
+    animation_name: String,
+    timer: Timer,
+}
+
+impl AnimatedSprite {
+    pub(crate) fn new(
+        image: Handle<Image>,
+        layout_handle: Handle<AnimationTextureAtlasLayout>,
+        layout: &AnimationTextureAtlasLayout,
+        animation: &str,
+        fps: u8,
+    ) -> impl Bundle {
+        (
+            Sprite::from_atlas_image(
+                image,
+                TextureAtlas {
+                    layout: layout.raw_layout.clone(),
+                    index: layout.get_first(animation).unwrap_or(0),
+                },
+            ),
+            AnimatedSprite {
+                layout: layout_handle,
+                animation_name: animation.to_string(),
+                timer: Timer::from_seconds(1.0 / fps as f32, TimerMode::Repeating),
+            },
+        )
+    }
+}
+
+fn animate(
+    mut query: Query<(&mut AnimatedSprite, &mut Sprite)>,
+    time: Res<Time>,
+    layouts: Res<Assets<AnimationTextureAtlasLayout>>,
+) {
+    for (mut animation, mut sprite) in query.iter_mut() {
+        if !animation.timer.tick(time.delta()).just_finished() {
+            continue;
+        };
+
+        let Some(layout) = layouts.get(&animation.layout) else {
+            continue;
+        };
+
+        let Some(atlas) = &mut sprite.texture_atlas else {
+            continue;
+        };
+
+        let Some(next_idx) = layout.cycle_next_multi(
+            &animation.animation_name,
+            atlas.index,
+            animation.timer.times_finished_this_tick() as usize,
+        ) else {
+            continue;
+        };
+
+        atlas.index = next_idx;
+    }
+}
+
+#[derive(Asset, TypePath, Clone)]
+pub(crate) struct AnimationTextureAtlasLayout {
+    raw_layout: Handle<TextureAtlasLayout>,
     indices: BTreeMap<String, Vec<usize>>,
 }
 
-impl NamedTextureAtlasLayout {
+impl AnimationTextureAtlasLayout {
     pub(crate) fn from_json(
         json: &str,
         assets: &mut ResMut<Assets<TextureAtlasLayout>>,
@@ -59,8 +128,8 @@ impl NamedTextureAtlasLayout {
 
         let handle = assets.add(raw);
 
-        Ok(NamedTextureAtlasLayout {
-            layout: handle,
+        Ok(AnimationTextureAtlasLayout {
+            raw_layout: handle,
             indices,
         })
     }
@@ -69,21 +138,34 @@ impl NamedTextureAtlasLayout {
         self.indices.get(name).and_then(|v| v.first().copied())
     }
 
-    pub(crate) fn get_next(&self, name: &str, current: usize) -> Option<usize> {
+    #[allow(unused)]
+    pub(crate) fn cycle_next(&self, name: &str, current: usize) -> Option<usize> {
+        self.cycle_next_multi(name, current, 1)
+    }
+
+    pub(crate) fn cycle_next_multi(
+        &self,
+        name: &str,
+        current: usize,
+        count: usize,
+    ) -> Option<usize> {
         let indices = self.indices.get(name)?;
-        let Ok(cur_idx) = indices.binary_search(&current) else {
+
+        let Some(cur_idx) = indices.iter().position(|&e| e == current) else {
             return indices.first().copied();
         };
 
-        if cur_idx == indices.len() - 1 {
-            indices.first().copied()
-        } else {
-            Some(indices[cur_idx + 1])
-        }
+        Some(indices[(cur_idx + count) % indices.len()])
     }
 
+    #[allow(unused)]
     pub(crate) fn get_nth(&self, name: &str, n: usize) -> Option<usize> {
         self.indices.get(name)?.get(n).copied()
+    }
+
+    #[allow(unused)]
+    pub(crate) fn has_animation(&self, name: &str) -> bool {
+        self.indices.contains_key(name)
     }
 }
 

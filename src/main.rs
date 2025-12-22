@@ -1,5 +1,3 @@
-#![warn(clippy::all)]
-
 use bevy::prelude::*;
 use downfall::GamePlugin;
 

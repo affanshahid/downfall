@@ -1,6 +1,9 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::{animation::NamedTextureAtlasLayout, game::GameState};
+use crate::{
+    animation::{AnimatedSprite, AnimationTextureAtlasLayout},
+    game::GameState,
+};
 
 pub(crate) struct LevelPlugin;
 
@@ -19,6 +22,7 @@ fn setup_level(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut layouts: ResMut<Assets<TextureAtlasLayout>>,
+    mut animation_layouts: ResMut<Assets<AnimationTextureAtlasLayout>>,
     window: Query<&Window, With<PrimaryWindow>>,
 ) {
     let Ok(window) = window.single() else { return };
@@ -27,19 +31,21 @@ fn setup_level(
 
     commands.spawn((bg, LevelEntity));
 
-    let named_layout = NamedTextureAtlasLayout::from_json(
+    let animation_layout = AnimationTextureAtlasLayout::from_json(
         include_str!("../assets/character_spritesheet.json"),
         &mut layouts,
     )
     .expect("expected to load spritesheet layout");
 
+    let animation_layout_handle = animation_layouts.add(animation_layout.clone());
+
     commands.spawn((
-        Sprite::from_atlas_image(
+        AnimatedSprite::new(
             asset_server.load("character_spritesheet.png"),
-            TextureAtlas {
-                layout: named_layout.layout.clone(),
-                index: named_layout.get_nth("idle", 2).unwrap(),
-            },
+            animation_layout_handle,
+            &animation_layout,
+            "idle",
+            24,
         ),
         Transform::from_translation(Vec3::new(0., -250., 10.)).with_scale(Vec3::splat(0.25)),
         LevelEntity,

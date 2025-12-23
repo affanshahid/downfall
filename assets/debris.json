@@ -3,17 +3,23 @@
     {
       "name": "wrench",
       "sprite_path": "wrench.png",
-      "scale": 0.15
+      "scale": 0.15,
+      "coll_width": 30.75,
+      "coll_height": 85.65
     },
     {
       "name": "cone",
       "sprite_path": "cone.png",
-      "scale": 0.25
+      "scale": 0.25,
+      "coll_width": 79.75,
+      "coll_height": 100
     },
     {
       "name": "toolbox",
       "sprite_path": "toolbox.png",
-      "scale": 0.2
+      "scale": 0.15,
+      "coll_width": 92.25,
+      "coll_height": 59.7
     }
   ]
 }

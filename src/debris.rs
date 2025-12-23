@@ -21,19 +21,32 @@ impl Plugin for DebrisPlugin {
 
 #[derive(Component, Default)]
 pub(crate) struct Debris {
+    pub(crate) definition_idx: usize,
     velocity: f32,
 }
 
 impl Debris {
     pub(crate) fn new(
+        definition_idx: usize,
         definition: &DebrisDefinition,
         asset_server: &AssetServer,
         transform: Transform,
     ) -> impl Bundle + use<> {
         (
-            Debris::default(),
+            Debris {
+                definition_idx,
+                velocity: 0.0,
+            },
             Sprite::from_image(asset_server.load(definition.sprite_path.clone())),
             transform.with_scale(Vec3::splat(definition.scale)),
+            // Uncomment to visualize collision rectangles
+            // children![(
+            //     Sprite::from_color(
+            //         Color::WHITE,
+            //         Vec2::new(definition.coll_width, definition.coll_height)
+            //     ),
+            //     Transform::default().with_scale(Vec3::splat(1.0 / definition.scale))
+            // )],
         )
     }
 
@@ -41,6 +54,7 @@ impl Debris {
         let idx = rand::rng().random_range(0..data.definitions.len());
         let x = rand::rng().random_range(MIN_X..MAX_X);
         Debris::new(
+            idx,
             &data.definitions[idx],
             asset_server,
             Transform::from_translation(Vec3::new(x as f32, MAX_Y + 50., 1.)),
@@ -67,12 +81,14 @@ fn fall(
 
 #[derive(Serialize, Deserialize, Resource)]
 pub(crate) struct DebrisData {
-    definitions: Vec<DebrisDefinition>,
+    pub(crate) definitions: Vec<DebrisDefinition>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct DebrisDefinition {
-    name: String,
-    sprite_path: String,
-    scale: f32,
+    pub(crate) name: String,
+    pub(crate) sprite_path: String,
+    pub(crate) scale: f32,
+    pub(crate) coll_width: f32,
+    pub(crate) coll_height: f32,
 }

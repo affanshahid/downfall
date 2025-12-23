@@ -8,7 +8,7 @@ use crate::{
     animation::AnimationTextureAtlasLayout,
     debris::{Debris, DebrisData},
     game::GameState,
-    player::Player,
+    player::{COLL_HEIGHT, COLL_WIDTH, Player},
 };
 
 pub(crate) struct LevelPlugin;
@@ -18,7 +18,7 @@ impl Plugin for LevelPlugin {
         app.add_systems(OnEnter(GameState::InGame), setup_level)
             .add_systems(
                 Update,
-                (handle_escape, spawn_debris).run_if(in_state(GameState::InGame)),
+                (handle_escape, spawn_debris, check_collision).run_if(in_state(GameState::InGame)),
             )
             .add_systems(OnExit(GameState::InGame), teardown_level)
             .insert_resource(DebrisTimer(Timer::new(
@@ -79,4 +79,31 @@ fn spawn_debris(
     }
 
     commands.spawn((LevelEntity, Debris::new_random(&data, &asset_server)));
+}
+
+fn check_collision(
+    debris_data: Res<DebrisData>,
+    player: Query<&Transform, With<Player>>,
+    debris: Query<(&Transform, &Debris)>,
+) {
+    let Ok(transform) = player.single() else {
+        return;
+    };
+
+    let player_rect = Rect::from_center_size(
+        transform.translation.truncate(),
+        Vec2::new(COLL_WIDTH, COLL_HEIGHT),
+    );
+
+    for (transform, debris) in debris.iter() {
+        let definition = &debris_data.definitions[debris.definition_idx];
+        let debris_rect = Rect::from_center_size(
+            transform.translation.truncate(),
+            Vec2::new(definition.coll_width, definition.coll_height),
+        );
+
+        if !player_rect.intersect(debris_rect).is_empty() {
+            println!("COLLISION");
+        }
+    }
 }

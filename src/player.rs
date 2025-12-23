@@ -8,6 +8,8 @@ use crate::{
 const VELOCITY_X: f32 = 300.0;
 const SCALE: f32 = 0.25;
 const PLAYER_Y: f32 = MIN_Y + 100.0;
+pub const COLL_WIDTH: f32 = 80.0;
+pub const COLL_HEIGHT: f32 = 175.0;
 
 pub(crate) struct PlayerPlugin;
 
@@ -62,6 +64,11 @@ impl Player {
             ),
             Transform::from_translation(Vec3::new(0., PLAYER_Y, 10.))
                 .with_scale(Vec3::splat(SCALE)),
+            // Uncomment to visualize collision rectangles
+            // children![(
+            //     Sprite::from_color(Color::WHITE, Vec2::new(COLL_WIDTH, COLL_HEIGHT)),
+            //     Transform::default().with_scale(Vec3::splat(1.0 / SCALE))
+            // )],
         )
     }
 }

@@ -8,6 +8,7 @@ use crate::{
     animation::AnimationTextureAtlasLayout,
     debris::{Debris, DebrisData},
     game::{GameState, InGameState},
+    menu::MENU_BG_COLOR,
     player::{COLL_HEIGHT, COLL_WIDTH, Player},
 };
 
@@ -16,6 +17,7 @@ pub(crate) struct LevelPlugin;
 impl Plugin for LevelPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::InGame), setup_level)
+            .add_systems(OnEnter(InGameState::GameOver), show_gameover_screen)
             .add_systems(
                 Update,
                 (spawn_debris, check_collision, update_score)
@@ -145,7 +147,42 @@ fn update_score(
     };
 
     text.0 = format!(
-        "Score: {}",
+        "SCORE: {}",
         score_stopwatch.tick(time.delta()).elapsed_secs().floor()
     );
+}
+
+fn show_gameover_screen(mut commands: Commands, score_stopwatch: Res<ScoreStopwatch>) {
+    commands.spawn((
+        LevelEntity,
+        Node {
+            width: percent(100.),
+            height: percent(100.),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
+            ..default()
+        },
+        BackgroundColor(MENU_BG_COLOR),
+        children![
+            (
+                Text::new("GAMEOVER"),
+                TextFont {
+                    font_size: 64.,
+                    ..default()
+                }
+            ),
+            ((
+                Node {
+                    margin: UiRect::top(px(30)),
+                    ..default()
+                },
+                Text::new(format!("SCORE: {}", score_stopwatch.elapsed_secs().floor())),
+                TextFont {
+                    font_size: 32.,
+                    ..default()
+                }
+            ),),
+        ],
+    ));
 }

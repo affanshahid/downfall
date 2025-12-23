@@ -4,12 +4,12 @@ use crate::{
 };
 use bevy::{prelude::*, window::WindowResolution};
 
-pub const WIDTH: f32 = 1280.0;
-pub const HEIGHT: f32 = 720.0;
-pub const MIN_X: f32 = -WIDTH / 2.0;
-pub const MAX_X: f32 = WIDTH / 2.0;
-pub const MAX_Y: f32 = HEIGHT / 2.0;
-pub const MIN_Y: f32 = -HEIGHT / 2.0;
+pub(crate) const WIDTH: f32 = 1280.0;
+pub(crate) const HEIGHT: f32 = 720.0;
+pub(crate) const MIN_X: f32 = -WIDTH / 2.0;
+pub(crate) const MAX_X: f32 = WIDTH / 2.0;
+pub(crate) const MAX_Y: f32 = HEIGHT / 2.0;
+pub(crate) const MIN_Y: f32 = -HEIGHT / 2.0;
 
 pub struct GamePlugin;
 

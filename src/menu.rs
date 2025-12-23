@@ -1,3 +1,4 @@
+use crate::game::GameState;
 use bevy::{
     input_focus::InputDispatchPlugin,
     picking::hover::Hovered,
@@ -5,7 +6,7 @@ use bevy::{
     ui_widgets::{Activate, Button, UiWidgetsPlugins, observe},
 };
 
-use crate::game::GameState;
+pub(crate) const MENU_BG_COLOR: Color = Color::srgb_u8(43, 44, 47);
 
 pub(crate) struct MenuPlugin;
 
@@ -33,6 +34,7 @@ fn setup_menu(mut commands: Commands) {
             margin: UiRect::top(px(64)),
             ..default()
         },
+        BackgroundColor(MENU_BG_COLOR),
         children![
             (
                 Text::new("DOWNFALL"),

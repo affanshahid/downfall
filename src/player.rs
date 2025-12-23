@@ -8,8 +8,8 @@ use crate::{
 const VELOCITY_X: f32 = 300.0;
 const SCALE: f32 = 0.25;
 const PLAYER_Y: f32 = MIN_Y + 100.0;
-pub const COLL_WIDTH: f32 = 80.0;
-pub const COLL_HEIGHT: f32 = 150.0;
+pub(crate) const COLL_WIDTH: f32 = 80.0;
+pub(crate) const COLL_HEIGHT: f32 = 150.0;
 
 pub(crate) struct PlayerPlugin;
 

@@ -4,22 +4,22 @@
       "name": "wrench",
       "sprite_path": "wrench.png",
       "scale": 0.15,
-      "coll_width": 30.75,
-      "coll_height": 85.65
+      "coll_width": 83.4,
+      "coll_height": 47.85
     },
     {
       "name": "cone",
       "sprite_path": "cone.png",
       "scale": 0.25,
-      "coll_width": 79.75,
-      "coll_height": 100
+      "coll_width": 79.25,
+      "coll_height": 107.0
     },
     {
       "name": "toolbox",
       "sprite_path": "toolbox.png",
       "scale": 0.15,
-      "coll_width": 92.25,
-      "coll_height": 59.7
+      "coll_width": 98.85,
+      "coll_height": 65.7
     }
   ]
 }

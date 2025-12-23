@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use thiserror::Error;
 
-use crate::game::GameState;
+use crate::game::InGameState;
 
 #[derive(Error, Debug)]
 #[error("{0}")]
@@ -14,7 +14,7 @@ pub(crate) struct AnimationPlugin;
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.init_asset::<AnimationTextureAtlasLayout>()
-            .add_systems(Update, animate.run_if(in_state(GameState::InGame)));
+            .add_systems(Update, animate.run_if(in_state(InGameState::Running)));
     }
 }
 

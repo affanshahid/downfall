@@ -1,13 +1,13 @@
 use std::time::Duration;
 
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{prelude::*, time::Stopwatch, window::PrimaryWindow};
 
-const STARTING_DEBRIS_TIMER_SECS: u64 = 3;
+const STARTING_DEBRIS_TIMER_SECS: u64 = 1;
 
 use crate::{
     animation::AnimationTextureAtlasLayout,
     debris::{Debris, DebrisData},
-    game::GameState,
+    game::{GameState, InGameState},
     player::{COLL_HEIGHT, COLL_WIDTH, Player},
 };
 
@@ -18,9 +18,12 @@ impl Plugin for LevelPlugin {
         app.add_systems(OnEnter(GameState::InGame), setup_level)
             .add_systems(
                 Update,
-                (handle_escape, spawn_debris, check_collision).run_if(in_state(GameState::InGame)),
+                (spawn_debris, check_collision, update_score)
+                    .run_if(in_state(InGameState::Running)),
             )
+            .add_systems(Update, handle_escape)
             .add_systems(OnExit(GameState::InGame), teardown_level)
+            .init_resource::<ScoreStopwatch>()
             .insert_resource(DebrisTimer(Timer::new(
                 Duration::from_secs(STARTING_DEBRIS_TIMER_SECS),
                 TimerMode::Repeating,
@@ -31,6 +34,12 @@ impl Plugin for LevelPlugin {
 #[derive(Component)]
 struct LevelEntity;
 
+#[derive(Component)]
+struct ScoreText;
+
+#[derive(Resource, Deref, DerefMut, Default)]
+struct ScoreStopwatch(Stopwatch);
+
 #[derive(Resource, Deref, DerefMut)]
 struct DebrisTimer(Timer);
 
@@ -40,6 +49,7 @@ fn setup_level(
     mut layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut animation_layouts: ResMut<Assets<AnimationTextureAtlasLayout>>,
     window: Query<&Window, With<PrimaryWindow>>,
+    mut score_stopwatch: ResMut<ScoreStopwatch>,
 ) {
     let Ok(window) = window.single() else { return };
     let mut bg = Sprite::from_image(asset_server.load("background.png"));
@@ -51,6 +61,18 @@ fn setup_level(
         Player::new(&asset_server, &mut layouts, &mut animation_layouts),
         LevelEntity,
     ));
+
+    commands.spawn((
+        Node {
+            margin: UiRect::axes(px(110), px(10)),
+            ..default()
+        },
+        Text::new("Score: 0"),
+        TextColor(Color::BLACK),
+        ScoreText,
+        LevelEntity,
+    ));
+    score_stopwatch.reset();
 }
 
 fn handle_escape(keys: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
@@ -85,6 +107,8 @@ fn check_collision(
     debris_data: Res<DebrisData>,
     player: Query<&Transform, With<Player>>,
     debris: Query<(&Transform, &Debris)>,
+    mut next_state: ResMut<NextState<InGameState>>,
+    mut score_stopwatch: ResMut<ScoreStopwatch>,
 ) {
     let Ok(transform) = player.single() else {
         return;
@@ -103,7 +127,24 @@ fn check_collision(
         );
 
         if !player_rect.intersect(debris_rect).is_empty() {
-            println!("COLLISION");
+            next_state.set(InGameState::GameOver);
+            score_stopwatch.pause();
+            return;
         }
     }
+}
+
+fn update_score(
+    mut score: Query<&mut Text, With<ScoreText>>,
+    mut score_stopwatch: ResMut<ScoreStopwatch>,
+    time: Res<Time>,
+) {
+    let Ok(mut text) = score.single_mut() else {
+        return;
+    };
+
+    text.0 = format!(
+        "Score: {}",
+        score_stopwatch.tick(time.delta()).elapsed_secs().floor()
+    );
 }

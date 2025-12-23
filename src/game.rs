@@ -31,6 +31,7 @@ impl Plugin for GamePlugin {
             DebrisPlugin,
         ))
         .init_state::<GameState>()
+        .add_sub_state::<InGameState>()
         .add_systems(Startup, setup_camera);
     }
 }
@@ -40,6 +41,14 @@ pub(crate) enum GameState {
     #[default]
     Menu,
     InGame,
+}
+
+#[derive(Default, SubStates, Debug, Clone, PartialEq, Eq, Hash)]
+#[source(GameState = GameState::InGame)]
+pub(crate) enum InGameState {
+    #[default]
+    Running,
+    GameOver,
 }
 
 fn setup_camera(mut commands: Commands) {

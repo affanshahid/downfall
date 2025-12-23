@@ -2,14 +2,14 @@ use bevy::prelude::*;
 
 use crate::{
     animation::{AnimatedSprite, AnimationTextureAtlasLayout},
-    game::{GameState, MAX_X, MIN_X, MIN_Y},
+    game::{InGameState, MAX_X, MIN_X, MIN_Y},
 };
 
 const VELOCITY_X: f32 = 300.0;
 const SCALE: f32 = 0.25;
 const PLAYER_Y: f32 = MIN_Y + 100.0;
 pub const COLL_WIDTH: f32 = 80.0;
-pub const COLL_HEIGHT: f32 = 175.0;
+pub const COLL_HEIGHT: f32 = 150.0;
 
 pub(crate) struct PlayerPlugin;
 
@@ -17,7 +17,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (handle_input, movement, flip_sprite).run_if(in_state(GameState::InGame)),
+            (handle_input, movement, flip_sprite).run_if(in_state(InGameState::Running)),
         );
     }
 }

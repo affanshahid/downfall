@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
-use crate::game::{GameState, MAX_X, MAX_Y, MIN_X, MIN_Y};
+use crate::game::{InGameState, MAX_X, MAX_Y, MIN_X, MIN_Y};
 
 const ACCELERATION: f32 = -1000.0;
 const GROUND_Y: f32 = MIN_Y + 100.0;
@@ -15,7 +15,7 @@ impl Plugin for DebrisPlugin {
             serde_json::from_str(include_str!("../assets/debris.json"))
                 .expect("expected correctly format debris definition"),
         )
-        .add_systems(Update, fall.run_if(in_state(GameState::InGame)));
+        .add_systems(Update, fall.run_if(in_state(InGameState::Running)));
     }
 }
 

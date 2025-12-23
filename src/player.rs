@@ -2,11 +2,12 @@ use bevy::prelude::*;
 
 use crate::{
     animation::{AnimatedSprite, AnimationTextureAtlasLayout},
-    game::{GameState, MAX_X, MIN_X},
+    game::{GameState, MAX_X, MIN_X, MIN_Y},
 };
 
 const VELOCITY_X: f32 = 300.0;
 const SCALE: f32 = 0.25;
+const PLAYER_Y: f32 = MIN_Y + 100.0;
 
 pub(crate) struct PlayerPlugin;
 
@@ -59,7 +60,8 @@ impl Player {
                 "idle",
                 24,
             ),
-            Transform::from_translation(Vec3::new(0., -250., 10.)).with_scale(Vec3::splat(SCALE)),
+            Transform::from_translation(Vec3::new(0., PLAYER_Y, 10.))
+                .with_scale(Vec3::splat(SCALE)),
         )
     }
 }

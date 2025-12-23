@@ -3,7 +3,7 @@
     {
       "name": "wrench",
       "sprite_path": "wrench.png",
-      "scale": 0.25
+      "scale": 0.15
     },
     {
       "name": "cone",
@@ -11,9 +11,9 @@
       "scale": 0.25
     },
     {
-      "name": "wrench",
+      "name": "toolbox",
       "sprite_path": "toolbox.png",
-      "scale": 0.25
+      "scale": 0.2
     }
   ]
 }

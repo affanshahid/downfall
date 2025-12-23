@@ -1,4 +1,8 @@
+use std::time::Duration;
+
 use bevy::{prelude::*, window::PrimaryWindow};
+
+const STARTING_DEBRIS_TIMER_SECS: u64 = 3;
 
 use crate::{
     animation::AnimationTextureAtlasLayout,
@@ -12,13 +16,23 @@ pub(crate) struct LevelPlugin;
 impl Plugin for LevelPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::InGame), setup_level)
-            .add_systems(Update, handle_escape.run_if(in_state(GameState::InGame)))
-            .add_systems(OnExit(GameState::InGame), teardown_level);
+            .add_systems(
+                Update,
+                (handle_escape, spawn_debris).run_if(in_state(GameState::InGame)),
+            )
+            .add_systems(OnExit(GameState::InGame), teardown_level)
+            .insert_resource(DebrisTimer(Timer::new(
+                Duration::from_secs(STARTING_DEBRIS_TIMER_SECS),
+                TimerMode::Repeating,
+            )));
     }
 }
 
 #[derive(Component)]
-pub(crate) struct LevelEntity;
+struct LevelEntity;
+
+#[derive(Resource, Deref, DerefMut)]
+struct DebrisTimer(Timer);
 
 fn setup_level(
     mut commands: Commands,
@@ -26,7 +40,6 @@ fn setup_level(
     mut layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut animation_layouts: ResMut<Assets<AnimationTextureAtlasLayout>>,
     window: Query<&Window, With<PrimaryWindow>>,
-    debris_data: Res<DebrisData>,
 ) {
     let Ok(window) = window.single() else { return };
     let mut bg = Sprite::from_image(asset_server.load("background.png"));
@@ -38,8 +51,6 @@ fn setup_level(
         Player::new(&asset_server, &mut layouts, &mut animation_layouts),
         LevelEntity,
     ));
-
-    commands.spawn(Debris::new_random(&debris_data, &asset_server));
 }
 
 fn handle_escape(keys: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
@@ -54,4 +65,18 @@ fn teardown_level(mut commands: Commands, entities: Query<Entity, With<LevelEnti
     for entity in entities.iter() {
         commands.entity(entity).despawn();
     }
+}
+
+fn spawn_debris(
+    mut commands: Commands,
+    data: Res<DebrisData>,
+    asset_server: Res<AssetServer>,
+    mut debris_timer: ResMut<DebrisTimer>,
+    time: Res<Time>,
+) {
+    if !debris_timer.tick(time.delta()).just_finished() {
+        return;
+    }
+
+    commands.spawn((LevelEntity, Debris::new_random(&data, &asset_server)));
 }

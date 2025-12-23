@@ -73,6 +73,7 @@ fn setup_level(
         LevelEntity,
     ));
     score_stopwatch.reset();
+    score_stopwatch.unpause();
 }
 
 fn handle_escape(keys: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {

@@ -26,6 +26,7 @@ impl Plugin for GamePlugin {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: "Downfall".to_string(),
+                        canvas: Some("#game".to_string()),
                         resolution: WindowResolution::new(WIDTH as u32, HEIGHT as u32),
                         resizable: false,
                         ..default()

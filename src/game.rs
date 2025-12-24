@@ -21,6 +21,9 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
+        #[cfg(target_arch = "wasm32")]
+        app.insert_resource(AssetMetaCheck::Never);
+
         app.add_plugins((
             DefaultPlugins
                 .set(WindowPlugin {

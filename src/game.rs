@@ -4,6 +4,12 @@ use crate::{
 };
 use bevy::{prelude::*, window::WindowResolution};
 
+#[cfg(target_arch = "wasm32")]
+const ASSET_PATH: &str = "downfall-assets";
+
+#[cfg(not(target_arch = "wasm32"))]
+const ASSET_PATH: &str = "assets";
+
 pub(crate) const WIDTH: f32 = 1280.0;
 pub(crate) const HEIGHT: f32 = 720.0;
 pub(crate) const MIN_X: f32 = -WIDTH / 2.0;
@@ -16,14 +22,20 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            DefaultPlugins.set(WindowPlugin {
-                primary_window: Some(Window {
-                    resolution: WindowResolution::new(WIDTH as u32, HEIGHT as u32),
-                    resizable: false,
+            DefaultPlugins
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        title: "Downfall".to_string(),
+                        resolution: WindowResolution::new(WIDTH as u32, HEIGHT as u32),
+                        resizable: false,
+                        ..default()
+                    }),
+                    ..default()
+                })
+                .set(AssetPlugin {
+                    file_path: ASSET_PATH.to_string(),
                     ..default()
                 }),
-                ..default()
-            }),
             MenuPlugin,
             LevelPlugin,
             AnimationPlugin,

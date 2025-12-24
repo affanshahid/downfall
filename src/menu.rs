@@ -14,7 +14,10 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((UiWidgetsPlugins, InputDispatchPlugin))
             .add_systems(OnEnter(GameState::Menu), setup_menu)
-            .add_systems(Update, button_hovered.run_if(in_state(GameState::Menu)))
+            .add_systems(
+                Update,
+                (button_hovered, handle_enter).run_if(in_state(GameState::Menu)),
+            )
             .add_systems(OnExit(GameState::Menu), teardown_menu);
     }
 }
@@ -101,6 +104,14 @@ fn button_hovered(mut buttons: Query<(&mut BackgroundColor, &Hovered), With<Butt
             bg.0 = Color::srgba(0., 0., 0., 0.);
         }
     }
+}
+
+fn handle_enter(input: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
+    if !input.just_pressed(KeyCode::Enter) {
+        return;
+    }
+
+    next_state.set(GameState::InGame);
 }
 
 fn teardown_menu(mut commands: Commands, menu: Query<Entity, With<MenuRoot>>) {

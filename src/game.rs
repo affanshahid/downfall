@@ -2,9 +2,7 @@ use crate::{
     animation::AnimationPlugin, debris::DebrisPlugin, level::LevelPlugin, menu::MenuPlugin,
     player::PlayerPlugin,
 };
-#[cfg(target_arch = "wasm32")]
-use bevy::asset::AssetMetaCheck;
-use bevy::{prelude::*, window::WindowResolution};
+use bevy::{asset::AssetMetaCheck, prelude::*, window::WindowResolution};
 
 #[cfg(target_arch = "wasm32")]
 const ASSET_PATH: &str = "downfall-assets";
@@ -23,9 +21,6 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        #[cfg(target_arch = "wasm32")]
-        app.insert_resource(AssetMetaCheck::Never);
-
         app.add_plugins((
             DefaultPlugins
                 .set(WindowPlugin {
@@ -40,6 +35,17 @@ impl Plugin for GamePlugin {
                 })
                 .set(AssetPlugin {
                     file_path: ASSET_PATH.to_string(),
+                    meta_check: {
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            AssetMetaCheck::Never
+                        }
+
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            AssetMetaCheck::default()
+                        }
+                    },
                     ..default()
                 }),
             MenuPlugin,

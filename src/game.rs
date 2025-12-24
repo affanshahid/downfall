@@ -2,6 +2,8 @@ use crate::{
     animation::AnimationPlugin, debris::DebrisPlugin, level::LevelPlugin, menu::MenuPlugin,
     player::PlayerPlugin,
 };
+#[cfg(target_arch = "wasm32")]
+use bevy::asset::AssetMetaCheck;
 use bevy::{prelude::*, window::WindowResolution};
 
 #[cfg(target_arch = "wasm32")]

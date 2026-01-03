@@ -96,6 +96,7 @@ fn new_game(_: On<Activate>, mut next_state: ResMut<NextState<GameState>>) {
     next_state.set(GameState::InGame);
 }
 
+#[allow(unused)]
 fn exit(_: On<Activate>, mut commands: Commands) {
     commands.write_message(AppExit::Success);
 }

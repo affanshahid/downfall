@@ -1,13 +1,17 @@
 use std::time::Duration;
 
-use bevy::{prelude::*, time::Stopwatch, window::PrimaryWindow};
+use bevy::{
+    prelude::*,
+    time::Stopwatch,
+    window::{PrimaryWindow, WindowResized},
+};
 
 const STARTING_DEBRIS_TIMER_SECS: u64 = 1;
 
 use crate::{
     animation::AnimationTextureAtlasLayout,
     debris::{Debris, DebrisData},
-    game::{GameState, InGameState},
+    game::{GameState, InGameState, ScreenConstraints},
     menu::MENU_BG_COLOR,
     player::{COLL_HEIGHT, COLL_WIDTH, Player},
 };
@@ -23,7 +27,10 @@ impl Plugin for LevelPlugin {
                 (spawn_debris, check_collision, update_score)
                     .run_if(in_state(InGameState::Running)),
             )
-            .add_systems(Update, handle_escape)
+            .add_systems(
+                Update,
+                (handle_escape, handle_resize).run_if(in_state(GameState::InGame)),
+            )
             .add_systems(OnExit(GameState::InGame), teardown_level)
             .init_resource::<ScoreStopwatch>()
             .insert_resource(DebrisTimer(Timer::new(
@@ -32,6 +39,9 @@ impl Plugin for LevelPlugin {
             )));
     }
 }
+
+#[derive(Component)]
+struct Background;
 
 #[derive(Component)]
 struct LevelEntity;
@@ -52,15 +62,21 @@ fn setup_level(
     mut animation_layouts: ResMut<Assets<AnimationTextureAtlasLayout>>,
     window: Query<&Window, With<PrimaryWindow>>,
     mut score_stopwatch: ResMut<ScoreStopwatch>,
+    constraints: Res<ScreenConstraints>,
 ) {
     let Ok(window) = window.single() else { return };
     let mut bg = Sprite::from_image(asset_server.load("background.png"));
     bg.custom_size = Some(Vec2::new(window.width(), window.height()));
 
-    commands.spawn((bg, LevelEntity));
+    commands.spawn((bg, LevelEntity, Background));
 
     commands.spawn((
-        Player::new(&asset_server, &mut layouts, &mut animation_layouts),
+        Player::new(
+            &asset_server,
+            &mut layouts,
+            &mut animation_layouts,
+            *constraints,
+        ),
         LevelEntity,
     ));
 
@@ -98,12 +114,16 @@ fn spawn_debris(
     asset_server: Res<AssetServer>,
     mut debris_timer: ResMut<DebrisTimer>,
     time: Res<Time>,
+    constraints: Res<ScreenConstraints>,
 ) {
     if !debris_timer.tick(time.delta()).just_finished() {
         return;
     }
 
-    commands.spawn((LevelEntity, Debris::new_random(&data, &asset_server)));
+    commands.spawn((
+        LevelEntity,
+        Debris::new_random(&data, *constraints, &asset_server),
+    ));
 }
 
 fn check_collision(
@@ -185,4 +205,17 @@ fn show_gameover_screen(mut commands: Commands, score_stopwatch: Res<ScoreStopwa
             ),),
         ],
     ));
+}
+
+fn handle_resize(
+    mut events: MessageReader<WindowResized>,
+    mut bg: Query<&mut Sprite, With<Background>>,
+) {
+    let Ok(mut bg) = bg.single_mut() else {
+        return;
+    };
+
+    for event in events.read() {
+        bg.custom_size = Some(Vec2::new(event.width, event.height));
+    }
 }

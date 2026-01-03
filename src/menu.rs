@@ -26,27 +26,30 @@ impl Plugin for MenuPlugin {
 pub struct MenuRoot;
 
 fn setup_menu(mut commands: Commands) {
-    commands.spawn((
-        GlobalTransform::default(),
-        MenuRoot,
-        Node {
-            width: percent(100),
-            height: percent(100),
-            flex_direction: FlexDirection::Column,
-            align_items: AlignItems::Center,
-            margin: UiRect::top(px(64)),
-            ..default()
-        },
-        BackgroundColor(MENU_BG_COLOR),
-        children![
-            (
+    commands
+        .spawn((
+            GlobalTransform::default(),
+            MenuRoot,
+            Node {
+                width: percent(100),
+                height: percent(100),
+                flex_direction: FlexDirection::Column,
+                align_items: AlignItems::Center,
+                margin: UiRect::top(px(64)),
+                ..default()
+            },
+            BackgroundColor(MENU_BG_COLOR),
+        ))
+        .with_children(|commands| {
+            commands.spawn((
                 Text::new("DOWNFALL"),
                 TextFont {
                     font_size: 64.,
                     ..default()
-                }
-            ),
-            (
+                },
+            ));
+
+            commands.spawn((
                 GlobalTransform::default(),
                 Node {
                     width: px(200),
@@ -64,8 +67,10 @@ fn setup_menu(mut commands: Commands) {
                 Button,
                 children![(Text::new("New Game"),)],
                 observe(new_game),
-            ),
-            (
+            ));
+
+            #[cfg(not(target_arch = "wasm32"))]
+            commands.spawn((
                 GlobalTransform::default(),
                 Node {
                     width: px(200),
@@ -83,9 +88,8 @@ fn setup_menu(mut commands: Commands) {
                 Button,
                 children![(Text::new("Exit"),)],
                 observe(exit),
-            )
-        ],
-    ));
+            ));
+        });
 }
 
 fn new_game(_: On<Activate>, mut next_state: ResMut<NextState<GameState>>) {

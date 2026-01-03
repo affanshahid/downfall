@@ -132,6 +132,7 @@ fn check_collision(
     debris: Query<(&Transform, &Debris)>,
     mut next_state: ResMut<NextState<InGameState>>,
     mut score_stopwatch: ResMut<ScoreStopwatch>,
+    constraints: Res<ScreenConstraints>,
 ) {
     let Ok(transform) = player.single() else {
         return;
@@ -139,14 +140,20 @@ fn check_collision(
 
     let player_rect = Rect::from_center_size(
         transform.translation.truncate(),
-        Vec2::new(COLL_WIDTH, COLL_HEIGHT),
+        Vec2::new(
+            COLL_WIDTH * constraints.scale,
+            COLL_HEIGHT * constraints.scale,
+        ),
     );
 
     for (transform, debris) in debris.iter() {
         let definition = &debris_data.definitions[debris.definition_idx];
         let debris_rect = Rect::from_center_size(
             transform.translation.truncate(),
-            Vec2::new(definition.coll_width, definition.coll_height),
+            Vec2::new(
+                definition.coll_width * constraints.scale,
+                definition.coll_height * constraints.scale,
+            ),
         );
 
         if !player_rect.intersect(debris_rect).is_empty() {

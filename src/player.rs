@@ -73,7 +73,7 @@ impl Player {
                 constraints.min_y + (PLAYER_Y_DELTA * constraints.scale),
                 10.,
             ))
-            .with_scale(Vec3::splat(SCALE)),
+            .with_scale(Vec3::splat(SCALE * constraints.scale)),
             // Uncomment to visualize collision rectangles
             // children![(
             //     Sprite::from_color(

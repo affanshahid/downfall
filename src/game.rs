@@ -33,7 +33,7 @@ impl Plugin for GamePlugin {
                     {
                         AssetPlugin {
                             file_path: "downfall-assets".to_string(),
-                            meta_check: AssetMetaCheck::Never,
+                            meta_check: bevy::asset::AssetMetaCheck::Never,
                             ..default()
                         }
                     }
